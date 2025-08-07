@@ -5,12 +5,16 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> Server-side Juicify project
+# Juicify
+
+YOO!! Juicify project
 My new Juicify project with free music and more!
+
 ## Project setup
 
+
 ```bash
-$ npm install
+$ npm install   
 ```
 
 ## Compile and run the project
