@@ -23,8 +23,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+My new Juicify project with free music and more!
 ## Project setup
 
 ```bash
