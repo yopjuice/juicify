@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserProduct {
+  FREE
+  PREMIUM
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  email          String      @unique
+  password       String?
+  name           String?
+  picture        String      @default("/uploads/no-user-image.png")
+  filter_enabled Boolean     @default(false)
+  product        UserProduct @default(FREE)
+  playlists      Playlist[]  @relation(name: "PlaylistCreator")
+  tracksLiked    Track[]
+  playlistsLiked Playlist[]  @relation(name: "PlaylistLiked")
+
+  @@map("user")
+}
+
+enum AlbumType {
+  ALBUM
+  SINGLE
+  COMPILATION
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name        String
+  description String?
+  isPublic    Boolean @default(false) @map("is_public")
+
+  user   User?   @relation(fields: [userId], references: [id], name: "PlaylistCreator")
+  userId String? @map("user_id")
+
+  usersLiked User[] @relation(name: "PlaylistLiked")
+
+  tracks Track[]
+
+  @@map("playlist")
+}
+
+model Album {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  type        AlbumType @default(ALBUM)
+  image       String    @default("/uploads/no-album-image.png")
+  name        String
+  releaseDate DateTime  @map("release_date")
+
+  tracks Track[]
+
+  @@map("album")
+}
+
+model Track {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name  String
+  image String @default("/uploads/no-album-image.png")
+
+  album   Album?  @relation(fields: [albumId], references: [id])
+  albumId String? @map("album_id")
+
+  playlists  Playlist[]
+  usersLiked User[]
+
+  @@map("track")
+}
