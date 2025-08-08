@@ -7,7 +7,7 @@
 
 # Juicify
 
-completly deleted this line
+YOO!! Juicify project
 My new Juicify project with free music and more!
 
 ## Project setup
