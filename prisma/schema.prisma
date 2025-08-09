@@ -32,6 +32,7 @@ model User {
   password       String?
   name           String?
   picture        String      @default("/uploads/no-user-image.png")
+  role           Role        @default(USER)
   filter_enabled Boolean     @default(false)
   product        UserProduct @default(FREE)
   playlists      Playlist[]  @relation(name: "PlaylistCreator")
@@ -88,6 +89,7 @@ model Track {
 
   name  String
   image String @default("/uploads/no-album-image.png")
+  url   String
 
   album   Album?  @relation(fields: [albumId], references: [id])
   albumId String? @map("album_id")
