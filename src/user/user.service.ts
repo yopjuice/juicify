@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import {hash} from 'argon2'
-import { AuthDto } from 'src/auth/dto/auth.dto';
+import { AuthDto } from '../auth/dto/auth.dto';
 
 @Injectable()
 export class UserService {
@@ -81,5 +81,13 @@ export class UserService {
         });
 
         return true;
+    }
+
+    async delete(id: string) {
+        return this.prisma.user.delete({
+            where: {
+                id
+            }
+        });
     }
 }

@@ -1,42 +1,73 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client'
+import { I18nContext } from 'nestjs-i18n';
+
+type PlaylistWithTranslations = Prisma.PlaylistGetPayload<{
+	include: { translations: true }
+}>
 
 @Injectable()
 export class PlaylistService {
-  constructor(private prisma: PrismaService) {}
+	lang: string;
 
-  async getAll() {
-    return this.prisma.playlist.findMany(
-      {
-        where: {
-          isPublic: true
-        }
-      }
-    )
-  }
+	constructor(
+		private prisma: PrismaService,
+	) {
+		this.lang = I18nContext.current()?.lang || 'en'
+	}
+
+	private getTranslatedPlaylist(playlist: PlaylistWithTranslations, lang: string) {
+		return {
+			...playlist,
+			name: playlist.translations.find((t) => t.language === lang)?.name || playlist.name,
+			description: playlist.translations.find((t) => t.language === lang)?.description || playlist.description,
+		}
+	}
+
+	async getPublic() {
+		const playlists = await this.prisma.playlist.findMany(
+			{
+				where: {
+					isPublic: true
+				},
+				include: {
+					translations: true
+				}
+			}
+		);
+
+		return playlists.map((playlist) => this.getTranslatedPlaylist(playlist, this.lang));
+	}
 
 	async getById(playlistId: string, userId: string) {
 		const playlist = await this.prisma.playlist.findUnique({
 			where: {
 				id: playlistId,
 				userId
+			},
+			include: {
+				translations: true
 			}
 		})
 
 		if (!playlist)
 			throw new NotFoundException(
-				'Store not found or you do not have access'
+				'Playlist not found or you do not have access'
 			)
 
-		return playlist
+		return this.getTranslatedPlaylist(playlist, this.lang)
 	}
 
 	async getByUserId(userId: string) {
 		const playlists = await this.prisma.playlist.findMany({
 			where: {
 				userId
+			},
+			include: {
+				translations: true
 			}
 		})
 
@@ -45,38 +76,52 @@ export class PlaylistService {
 				'No playlists found for this account'
 			)
 
-		return playlists
+		return playlists.map((playlist) => this.getTranslatedPlaylist(playlist, this.lang))
 	}
 
 
 	async create(userId: string, dto: CreatePlaylistDto) {
-		return this.prisma.playlist.create({
+		const playlist = await this.prisma.playlist.create({
 			data: {
 				name: dto.name,
-        description: dto.description,
-        isPublic: dto.isPublic,
+				description: dto.description,
+				isPublic: dto.isPublic,
 				userId
+			},
+			include: {
+				translations: true
 			}
-		})
+		});
+
+		return this.getTranslatedPlaylist(playlist, this.lang)
 	}
 
 	async update(playlistId: string, userId: string, dto: UpdatePlaylistDto) {
 		await this.getById(playlistId, userId)
 
-		return this.prisma.playlist.update({
+		const playlist = await this.prisma.playlist.update({
 			where: { id: playlistId },
 			data: {
 				...dto,
-				userId
+			},
+			include: {
+				translations: true
 			}
-		})
+		});
+
+		return this.getTranslatedPlaylist(playlist, this.lang)
 	}
 
 	async delete(playlistId: string, userId: string) {
 		await this.getById(playlistId, userId)
 
-		return this.prisma.playlist.delete({
-			where: { id: playlistId }
-		})
+		const playlist = await this.prisma.playlist.delete({
+			where: { id: playlistId },
+			include: {
+				translations: true
+			}
+		});
+
+		return this.getTranslatedPlaylist(playlist, this.lang)
 	}
 }

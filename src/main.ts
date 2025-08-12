@@ -4,21 +4,37 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { MyLogger } from './logger/my-logger.service';
+import * as compression from 'compression';
+import helmet from 'helmet';
+
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  app.useLogger(app.get(MyLogger));
 
-   const redis = await NestFactory.createMicroservice<MicroserviceOptions>(
+  const redis = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
       transport: Transport.TCP,
       options: {
-        
+
       }
     },
   );
 
   app.use(cookieParser())
+
+  app.use(compression());
+
+  app.use(helmet({
+    crossOriginResourcePolicy: false
+  }));
+  
+
   app.enableCors({
     credentials: true,
     origin: process.env.CLIENT_URL ?? '',
@@ -40,6 +56,7 @@ async function bootstrap() {
 
 
   await app.listen(process.env.PORT ?? 5000);
+
 }
 bootstrap();
 

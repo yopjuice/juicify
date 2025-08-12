@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PlaylistService } from './playlist.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/user/decorators/user.decorator';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../user/decorators/user.decorator';
 
 @Controller('playlists')
 export class PlaylistController {
@@ -16,8 +16,8 @@ export class PlaylistController {
   }
 
   @Get()
-  async getAll() {
-    return await this.playlistService.getAll();
+  async getPublic() {
+    return await this.playlistService.getPublic();
   }
 
   @Get('my')

@@ -6,7 +6,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { ApiCookieAuth, ApiHeader, ApiResponse } from '@nestjs/swagger';
 import { MyApiResponse } from './decorators/my-api-response.decorator';
-import { authApiResponse, userApiResponse } from 'api-responses';
+import { authApiResponse, userApiResponse } from '../../api-responses';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) { }
 
+  @UseGuards(ThrottlerGuard)
   @MyApiResponse(authApiResponse)
   @Post('login')
   async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {

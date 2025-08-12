@@ -5,7 +5,7 @@ import { FileResponse } from './file.interface'
 
 @Injectable()
 export class FileService {
-	async saveFiles(files: globalThis.Express.Multer.File[], folder: string = 'products') {
+	async saveFiles(files: globalThis.Express.Multer.File[], folder: string = 'tracks'): Promise<FileResponse[]> {
 		const uploadedFolder = `${path}/uploads/${folder}`
 
 		await ensureDir(uploadedFolder)

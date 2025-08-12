@@ -19,9 +19,15 @@ describe('AppController (e2e)', () => {
   it('/ (GET)', () => {
     return request(app.getHttpServer())
       .get('/')
+      .set('Accept', 'application/json')
+      .set('Accept-Language', 'en')
       .expect(200)
-      .expect('Hello World!');
+      .expect('Hello world');
   });
+
+  afterAll(async () => {
+    await app.close();
+  })
 });
 
 

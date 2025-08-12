@@ -7,8 +7,8 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Response } from 'express'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { UserService } from 'src/user/user.service'
+import { PrismaService } from '../prisma/prisma.service'
+import { UserService } from '../user/user.service'
 import { AuthDto } from './dto/auth.dto'
 
 @Injectable()

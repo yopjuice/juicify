@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { TrackService } from './track.service';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/user/decorators/user.decorator';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../user/decorators/user.decorator';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Admin } from 'src/auth/decorators/admin.decorator';
+import { Admin } from '../auth/decorators/admin.decorator';
 
 
 @Admin()

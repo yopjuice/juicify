@@ -64,7 +64,24 @@ model Playlist {
 
   tracks Track[]
 
+  translations PlaylistTranslation[]
+
   @@map("playlist")
+}
+
+model PlaylistTranslation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  language    String
+  name        String
+  description String?
+
+  playlist   Playlist @relation(fields: [id], references: [id])
+  playlistId String?  @map("playlist_id")
+
+  @@map("playlist_translation")
 }
 
 model Album {
